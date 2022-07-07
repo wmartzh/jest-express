@@ -42,4 +42,5 @@ module.exports = {
   handleResponse,
   handleErrorResponse,
   isBodyEmpty,
+  CustomError,
 };

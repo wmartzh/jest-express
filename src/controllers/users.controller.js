@@ -5,7 +5,7 @@ const {
 } = require("../helpers/response.helper");
 const { registerUserSchema } = require("../schemas/users.schema");
 const userService = require("../services/users.service");
-const registerUser = async (req, res) => {
+async function registerUser(req, res) {
   try {
     isBodyEmpty(req.body);
     const userData = await registerUserSchema.validateAsync(req.body);
@@ -13,12 +13,17 @@ const registerUser = async (req, res) => {
   } catch (error) {
     handleErrorResponse(res, error);
   }
-};
+}
 
-const getAll = async (req, res) =>{
-  
+async function getAll(req, res) {
+  try {
+    handleResponse(res, 200, await userService.findAll());
+  } catch (error) {
+    handleErrorResponse(res, error);
+  }
 }
 
 module.exports = {
   registerUser,
+  getAll,
 };
