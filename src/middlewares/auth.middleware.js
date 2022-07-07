@@ -7,6 +7,7 @@ function validateHeaders(req, res) {
       error: "Authentication required",
     });
   }
+  return;
 }
 
 function getHeaderToken(header, res) {
@@ -31,24 +32,25 @@ function deleteUserFromRequest(req) {
   if (req.user) {
     delete req.user;
   }
+  return;
 }
 
 async function authenticate(req, res, next) {
-  validateHeaders(req, res);
+  try {
+    validateHeaders(req, res);
+    const { authorization } = req.headers;
+    const token = getHeaderToken(authorization);
+    const payload = jwt.verify(token, PRIVATE);
+    await setHeader(req, payload.email);
 
-  const { authorization } = req.headers;
-  const token = getHeaderToken(authorization);
-  const payload = jwt.verify(token, PRIVATE);
-
-  if (!payload) {
+    next();
+  } catch (error) {
     deleteUserFromRequest(req);
     res.status(401).json({
       error: "Unauthorized",
     });
+    // return;
   }
-  await setHeader(req, payload.email);
-
-  next();
 }
 
 module.exports = {

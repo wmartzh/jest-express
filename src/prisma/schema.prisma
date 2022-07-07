@@ -23,8 +23,9 @@ enum OrderState {
 type Product {
   name        String
   price       Float
+  tax         Float
   quantity    Float
-  description Float
+  description Float?
 }
 
 model User {

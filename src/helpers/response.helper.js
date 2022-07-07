@@ -10,7 +10,9 @@ class CustomError extends Error {
 const validateSchemaErrors = (res, error) => {
   if (error.details) {
     res.status(400).json({ message: error.details[0].message });
+    return;
   }
+  return false;
 };
 
 const isBodyEmpty = (body) => {
@@ -29,8 +31,10 @@ const handleErrorResponse = (res, error) => {
     "🔰 > file: response.helper.js > line 27 > handleErrorResponse > error",
     error
   );
-  validateSchemaErrors(res, error);
-  if (error.status) {
+  if (error.details) {
+    res.status(400).json({ message: error.details[0].message });
+    return;
+  } else if (error.status) {
     res.status(error.status).json(error.response);
     return;
   }
@@ -38,7 +42,6 @@ const handleErrorResponse = (res, error) => {
   res.status(500).json({
     message: "Server Internal Error",
   });
-  return;
 };
 
 module.exports = {
