@@ -10,10 +10,51 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum OrderState {
+  NEW
+  CONFIRMED
+  CANCELED
+  PACKING_UP
+  PACKEND
+  ON_WAY
+  DELIVERED
+}
+
+type Product {
+  name        String
+  price       Float
+  quantity    Float
+  description Float
+}
+
 model User {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
   username  String
   email     String   @unique()
   password  String
   createdAt DateTime @default(now())
+}
+
+model Orders {
+  id           String     @id @default(auto()) @map("_id") @db.ObjectId
+  number       String
+  state        OrderState @default(NEW)
+  products     Product[]
+  subtotal     Float
+  taxes        Float
+  shipping_fee Float
+  total        Float
+  address      String
+  createdAt    DateTime   @default(now())
+
+  ShippingComments ShippingComments[]
+}
+
+model ShippingComments {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  ordersId  String   @db.ObjectId
+  orders    Orders   @relation(fields: [ordersId], references: [id])
+  message   String
+  createdAt DateTime @default(now())
+
 }
