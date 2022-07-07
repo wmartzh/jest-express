@@ -9,7 +9,10 @@ function subtotal(products) {
   );
 }
 function getTaxes(products) {
-  return products.reduce((prev, current) => prev + current.tax, 0);
+  return products.reduce(
+    (prev, current) => prev + current.tax * current.quantity,
+    0
+  );
 }
 
 function generateOrderNumber(q) {
