@@ -21,6 +21,7 @@ const isBodyEmpty = (body) => {
 
 const handleResponse = (res, status, response) => {
   res.status(status).json(response);
+  return;
 };
 
 const handleErrorResponse = (res, error) => {
@@ -31,11 +32,13 @@ const handleErrorResponse = (res, error) => {
   validateSchemaErrors(res, error);
   if (error.status) {
     res.status(error.status).json(error.response);
+    return;
   }
 
   res.status(500).json({
     message: "Server Internal Error",
   });
+  return;
 };
 
 module.exports = {

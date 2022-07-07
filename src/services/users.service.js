@@ -37,7 +37,17 @@ async function findAll() {
   };
 }
 
+async function findBy(field, value) {
+  return prisma.user.findFirst({
+    where: {
+      [field]: value,
+    },
+  });
+}
+
 module.exports = {
+  hashPassword,
   createUser,
   findAll,
+  findBy,
 };
