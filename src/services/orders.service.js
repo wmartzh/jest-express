@@ -31,8 +31,57 @@ async function create(newOrder) {
   newOrder["total"] =
     newOrder.subtotal + newOrder.taxes + newOrder.shipping_fee;
 
-  const order = await prisma.orders.create({ data: newOrder });
+  return prisma.orders.create({ data: newOrder });
+}
+
+async function getAll() {
+  const result = await prisma.orders.findMany({
+    include: {
+      ShippingComments: true,
+    },
+  });
+  if (!result) {
+    throw new CustomError({ status: 404, message: "No orders found" });
+  }
+  return result;
+}
+async function getById(orderId) {
+  const order = await prisma.orders.findFirst({
+    where: {
+      id: orderId,
+    },
+    include: {
+      ShippingComments: true,
+    },
+  });
+  if (!order) {
+    throw new CustomError({ status: 404, message: "Order doesn't exist" });
+  }
   return order;
 }
 
-module.exports = { create };
+async function updateState(orderData) {
+  const { orderId, ...rest } = orderData;
+  await prisma.orders.update({
+    where: {
+      id: orderId,
+    },
+    data: {
+      state: rest.orderState,
+    },
+  });
+
+  await prisma.shippingComments.create({
+    data: {
+      ordersId: orderId,
+      message: rest.comments
+        ? rest.comments
+        : `State updated to: ${rest.orderState}`,
+    },
+  });
+  return {
+    message: "Order was updated successfully",
+  };
+}
+
+module.exports = { create, getAll, updateState, getById };

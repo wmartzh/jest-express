@@ -7,14 +7,6 @@ class CustomError extends Error {
   }
 }
 
-const validateSchemaErrors = (res, error) => {
-  if (error.details) {
-    res.status(400).json({ message: error.details[0].message });
-    return;
-  }
-  return false;
-};
-
 const isBodyEmpty = (body) => {
   if (Object.keys(body).length == 0) {
     throw new CustomError({ status: 400, message: "Body is required" });

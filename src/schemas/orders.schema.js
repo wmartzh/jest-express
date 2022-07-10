@@ -13,6 +13,13 @@ const createOrderSchema = Joi.object({
   products: Joi.array().items(productSchema).required().min(1),
 });
 
+const updateStateOrderSchema = Joi.object({
+  orderId: Joi.string().required(),
+  orderState: Joi.string().required(),
+  comments: Joi.string(),
+});
+
 module.exports = {
   createOrderSchema,
+  updateStateOrderSchema,
 };
