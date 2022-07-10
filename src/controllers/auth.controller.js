@@ -3,8 +3,12 @@ const {
   isBodyEmpty,
   handleResponse,
 } = require("../helpers/response.helper");
-const { loginUserSchema } = require("../schemas/users.schema");
+const {
+  loginUserSchema,
+  registerUserSchema,
+} = require("../schemas/users.schema");
 const authService = require("../services/auth.service");
+const userService = require("../services/users.service");
 
 async function login(req, res) {
   try {
@@ -19,7 +23,17 @@ async function login(req, res) {
     handleErrorResponse(res, error);
   }
 }
+async function registerUser(req, res) {
+  try {
+    isBodyEmpty(req.body);
+    const userData = await registerUserSchema.validateAsync(req.body);
+    handleResponse(res, 200, await userService.createUser(userData));
+  } catch (error) {
+    handleErrorResponse(res, error);
+  }
+}
 
 module.exports = {
   login,
+  registerUser,
 };
